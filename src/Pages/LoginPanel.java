@@ -1,5 +1,6 @@
 package Pages;
 
+import Controllers.PanelController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -42,26 +43,26 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
             login.setBackground(Color.WHITE);
         }
 
-        JLabel name = new JLabel("Name");
+        JLabel name = new JLabel("Account");
         JLabel pin = new JLabel("PIN");
         {
             name.setForeground(new Color(58, 58, 58));
             pin.setForeground(new Color(58, 58, 58));
             name.setFont(FontDao.getFont(FontDao.IMPACT, 17));
             pin.setFont(FontDao.getFont(FontDao.IMPACT, 17));
-            name.setBounds(45, 175, 50, 20);
-            pin.setBounds(45, 205, 50, 20);
+            name.setBounds(45, 175, 100, 20);
+            pin.setBounds(45, 205, 100, 20);
         }
 
         nameText = new JTextField();
         passwordText = new JPasswordField();
         {
-            nameText.setBounds(105, 175, 155, 20);
-            passwordText.setBounds(105, 205, 155, 20);
+            nameText.setBounds(125, 175, 135, 20);
+            passwordText.setBounds(125, 205, 135, 20);
         }
 
         {
-            logInButton = new JLabel(IconDao.getIcon(IconDao.RIGHT_CIRCLE_FILL, 32, 32), SwingConstants.CENTER);
+            logInButton = new JLabel(IconDao.getIcon(IconDao.LOGIN, 32, 32), SwingConstants.CENTER);
             addUserButton = new JLabel(IconDao.getIcon(IconDao.ADDUSER, 32, 32), SwingConstants.CENTER);
             logInButton.setBounds(170, 255, 32, 32);
             addUserButton.setBounds(60, 255, 32, 32);
@@ -87,7 +88,7 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
     }
 
     @Override
-    public void refresh() {}
+    protected void refresh() {}
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -96,6 +97,7 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
 
         if (e.getSource().equals(logInButton)) {
             System.out.println("Log in button clicked");
+            panelController.push(new MainPanel(panelController));
         } else if (e.getSource().equals(addUserButton)) {
             System.out.println("Add user button clicked");
             panelController.push(new RegisterPanel(panelController));

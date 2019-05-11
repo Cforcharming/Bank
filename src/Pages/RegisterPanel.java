@@ -1,5 +1,6 @@
 package Pages;
 
+import Controllers.PanelController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -19,16 +20,21 @@ import java.util.Objects;
 public class RegisterPanel extends AutoRefreshableJPanel implements MouseListener {
 
     private PanelController panelController;
+    private JLabel backButton;
     private JTextField nameText;
     private JTextField addressText;
     private JTextField dateText;
     private JComboBox<String> typeBox;
     private JLabel logInButton;
 
-    public RegisterPanel(PanelController panelController) {
+    RegisterPanel(PanelController panelController) {
 
         this.setBackground(Color.WHITE);
         this.setLayout(null);
+
+        backButton = new JLabel(IconDao.getIcon(IconDao.BACK, 25, 25), SwingConstants.CENTER);
+        backButton.setBounds(10, 10, 25, 25);
+        backButton.addMouseListener(this);
 
         JLabel registry = new JLabel("Add your account");
         {
@@ -71,12 +77,12 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
             typeBox.setBounds(115, 245, 145, 20);
         }
 
-        logInButton = new JLabel(IconDao.getIcon(IconDao.RIGHT_CIRCLE_FILL, 48, 48), SwingConstants.CENTER);
-        logInButton.setBounds(125, 300, 48, 48);
-
+        logInButton = new JLabel(IconDao.getIcon(IconDao.NEXT, 32, 32), SwingConstants.CENTER);
+        logInButton.setBounds(125, 300, 32, 32);
         logInButton.addMouseListener(this);
 
         {
+            this.add(backButton);
             this.add(registry);
             this.add(name);
             this.add(address);
@@ -95,18 +101,23 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
     }
 
     @Override
-    public void refresh() {}
+    protected void refresh() {}
 
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("@RegisterPanel");
+        System.out.println(
+                "name: " + nameText.getText()
+                        + " address: " + addressText.getText()
+                        + " birth: " + dateText.getText()
+                        + " type: " + Objects.requireNonNull(typeBox.getSelectedItem()).toString());
         if (e.getSource().equals(logInButton)) {
-            System.out.println(
-                    "name: " + nameText.getText()
-                    + " address: " + addressText.getText()
-                    + " birth: " + dateText.getText()
-                    + " type: " + Objects.requireNonNull(typeBox.getSelectedItem()).toString());
             System.out.println("Log in button clicked");
+            panelController.pop();
+            panelController.push(new MainPanel(panelController));
+        } else if (e.getSource().equals(backButton)) {
+            System.out.println("Back button clicked");
+            panelController.pop();
         }
     }
 

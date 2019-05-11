@@ -1,7 +1,7 @@
 package Main;
 
+import Controllers.PanelController;
 import Pages.LoginPanel;
-import Pages.PanelController;
 
 /**
  * The access of the main {@code Thread}.

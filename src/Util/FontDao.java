@@ -12,10 +12,8 @@ import java.io.IOException;
 public class FontDao {
 
     public static final String MENLO = "resources/fonts/Menlo.ttc";
-    public static final String HELVETICA_NEUE = "resources/fonts/HelveticaNeue.ttc";
     public static final String IMPACT = "resources/fonts/Impact.ttf";
     public static final String SOURCE_CODE_PRO_BOLD = "resources/fonts/SourceCodePro-Bold.ttf";
-    public static final String PREMIER_LIGHTLINE_STD = "resources/fonts/PremierLightlineStd.otf";
     public static final String SOURCE_CODE_PRO_EXTRA_LIGHT = "resources/fonts/SourceCodePro-ExtraLight.ttf";
 
     public static Font getFont(String typeURL, float size) {

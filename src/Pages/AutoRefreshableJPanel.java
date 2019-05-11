@@ -12,5 +12,5 @@ public abstract class AutoRefreshableJPanel extends javax.swing.JPanel {
     /**
      * Used for refreshing all the pages.
      */
-    public abstract void refresh();
+    protected abstract void refresh();
 }
