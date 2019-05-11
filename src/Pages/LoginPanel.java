@@ -1,6 +1,6 @@
 package Pages;
 
-import Controllers.PanelController;
+import Controllers.MainController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -12,17 +12,17 @@ import java.awt.event.MouseListener;
 /**
  * Log in page, the first page showed.
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
 
-    private PanelController panelController;
+    private MainController mainController;
     private JTextField nameText;
-    private JTextField passwordText;
+    private JPasswordField passwordText;
     private JLabel logInButton;
     private JLabel addUserButton;
 
-    public LoginPanel(PanelController panelController) {
+    public LoginPanel(MainController mainController) {
 
         this.setBackground(Color.WHITE);
         this.setLayout(null);
@@ -84,7 +84,7 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
 
         this.setVisible(false);
 
-        this.panelController = panelController;
+        this.mainController = mainController;
     }
 
     @Override
@@ -93,14 +93,20 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        System.out.println("@LoginPanel\nName: " + nameText.getText() + ", PIN: " + passwordText.getText());
+        String password =  new String(passwordText.getPassword());
+        System.out.println("@LoginPanel\nName: " + nameText.getText() + ", PIN: " + password);
 
         if (e.getSource().equals(logInButton)) {
             System.out.println("Log in button clicked");
-            panelController.push(new MainPanel(panelController));
+            if (mainController.getAccountDao().login(nameText.getText(), password)) {
+                mainController.getPanelController().push(new MainPanel(mainController));
+            } else {
+                JOptionPane.showMessageDialog(this, "You have input wrong account number or PIN", "", JOptionPane.PLAIN_MESSAGE);
+                passwordText.setText("");
+            }
         } else if (e.getSource().equals(addUserButton)) {
             System.out.println("Add user button clicked");
-            panelController.push(new RegisterPanel(panelController));
+            mainController.getPanelController().push(new RegisterPanel(mainController));
         }
     }
 

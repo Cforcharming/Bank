@@ -1,0 +1,8 @@
+account,name,pin,address,birthday,balance,state,
+1a001,zhanghanwen,0010,BUPT,1998-01-14,1000,4,
+1a002,sunqinghao,0020,BUPT,1998-01-14,-200,5,
+2a001,sunqinghao,0010,BUPT,2010-11-14,0,4,
+3a001,zhanghanwen,0010,BUPT,1998-01-14,5000,4,
+3a002,panzihang,0020,BUPT,1998-01-14,-2000,4,
+1a003,panzihang,0030,BUPT,1998-01-14,0,6,
+1a004,zhanghanwen,0040,a,1998-1-14,0,4,

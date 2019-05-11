@@ -1,22 +1,22 @@
 package Main;
 
-import Controllers.PanelController;
+import Controllers.MainController;
 import Pages.LoginPanel;
 
 /**
  * The access of the main {@code Thread}.
  * Initialise the daemon {@code Thread} for back-stage management.
- * @see PanelController
+ * @see MainController
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class Bank {
 
     public static void main(String[] args) {
 
-        PanelController panelController = new PanelController();
+        MainController mainController = new MainController();
 
-        LoginPanel loginPanel = new LoginPanel(panelController);
-        panelController.push(loginPanel);
+        LoginPanel loginPanel = new LoginPanel(mainController);
+        mainController.getPanelController().push(loginPanel);
     }
 }

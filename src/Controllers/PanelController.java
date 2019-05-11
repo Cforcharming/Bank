@@ -9,17 +9,18 @@ import java.util.ArrayList;
 
 /**
  * This class is used for the back-stage management of the visions.
+ * @see MainController
  * @see Bank
  * @see AutoRefreshableJPanel
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class PanelController {
 
     private ArrayList<AutoRefreshableJPanel> Pages;
     private JFrame mainFrame;
 
-    public PanelController() {
+    PanelController() {
         this.Pages = new ArrayList<>(3); //WORKS AS THE STACK;
         this.mainFrame = new MainFrame();
     }

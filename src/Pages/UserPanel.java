@@ -1,6 +1,6 @@
 package Pages;
 
-import Controllers.PanelController;
+import Controllers.MainController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -19,11 +19,11 @@ import java.awt.event.MouseListener;
  *     <li>logout</li>
  * </ul>
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
 
-    private PanelController panelController;
+    private MainController mainController;
     private String name = "C for charming";
     private JLabel suspend;
     private JLabel resume;
@@ -32,7 +32,7 @@ public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
     private JLabel logoutText;
     private JLabel FUNCTIONS;
 
-    UserPanel(PanelController panelController) {
+    UserPanel(MainController mainController) {
 
         this.setLayout(null);
         this.setBackground(Color.WHITE);
@@ -114,7 +114,7 @@ public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
         this.add(THIS);
         this.add(FUNCTIONS);
 
-        this.panelController = panelController;
+        this.mainController = mainController;
     }
 
     @Override
@@ -127,11 +127,11 @@ public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
         System.out.println("name: " + name);
         if (e.getSource().equals(FUNCTIONS)) {
             System.out.println("FUNCTIONS clicked");
-            panelController.pop();
+            mainController.getPanelController().pop();
         } else if (e.getSource().equals(logout) || e.getSource().equals(logoutText)) {
             System.out.println("logout clicked");
-            panelController.pop();
-            panelController.pop();
+            mainController.getPanelController().pop();
+            mainController.getPanelController().pop();
         } else if (e.getSource().equals(suspend)) {
             System.out.println("suspend clicked");
         } else if (e.getSource().equals(resume)) {

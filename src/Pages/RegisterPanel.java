@@ -1,6 +1,6 @@
 package Pages;
 
-import Controllers.PanelController;
+import Controllers.MainController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -13,13 +13,12 @@ import java.util.Objects;
 /**
  * the registry page
  * @see AutoRefreshableJPanel
- * @see PanelController
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class RegisterPanel extends AutoRefreshableJPanel implements MouseListener {
 
-    private PanelController panelController;
+    private MainController mainController;
     private JLabel backButton;
     private JTextField nameText;
     private JTextField addressText;
@@ -27,7 +26,7 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
     private JComboBox<String> typeBox;
     private JLabel logInButton;
 
-    RegisterPanel(PanelController panelController) {
+    RegisterPanel(MainController mainController) {
 
         this.setBackground(Color.WHITE);
         this.setLayout(null);
@@ -75,6 +74,7 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
             typeBox.addItem("junior account");
             typeBox.addItem("current account");
             typeBox.setBounds(115, 245, 145, 20);
+            dateText.setText("1970-01-01");
         }
 
         logInButton = new JLabel(IconDao.getIcon(IconDao.NEXT, 32, 32), SwingConstants.CENTER);
@@ -97,7 +97,7 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
 
         this.setVisible(false);
 
-        this.panelController = panelController;
+        this.mainController = mainController;
     }
 
     @Override
@@ -113,11 +113,41 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
                         + " type: " + Objects.requireNonNull(typeBox.getSelectedItem()).toString());
         if (e.getSource().equals(logInButton)) {
             System.out.println("Log in button clicked");
-            panelController.pop();
-            panelController.push(new MainPanel(panelController));
+            int msg = mainController.getAccountDao().register(
+                    nameText.getText(),
+                    addressText.getText(),
+                    dateText.getText(),
+                    Objects.requireNonNull(typeBox.getSelectedItem()).toString()
+            );
+            if (msg == 0) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please remember your Account No.: "
+                                + mainController.getAccountDao().getAccount().getAccountNo()
+                                + "\nyour PIN: "
+                                + mainController.getAccountDao().getAccount().getPin(),
+                        "Registry success",
+                        JOptionPane.INFORMATION_MESSAGE);
+                mainController.getPanelController().push(new MainPanel(mainController));
+            } else {
+                switch (msg) {
+                    case 1:
+                        JOptionPane.showMessageDialog(this, "You are on the blacklist, and you cannot register!", "", JOptionPane.PLAIN_MESSAGE);
+                        break;
+                    case 2:
+                        JOptionPane.showMessageDialog(this, "You too young to register a current account.", "", JOptionPane.PLAIN_MESSAGE);
+                        break;
+                    case 3:
+                        JOptionPane.showMessageDialog(this, "Your birthday format is incorrect!", "", JOptionPane.PLAIN_MESSAGE);
+                        break;
+                    case 4:
+                        JOptionPane.showMessageDialog(this, "Please complete the table!", "", JOptionPane.PLAIN_MESSAGE);
+                        break;
+                }
+            }
         } else if (e.getSource().equals(backButton)) {
             System.out.println("Back button clicked");
-            panelController.pop();
+            mainController.getPanelController().pop();
         }
     }
 

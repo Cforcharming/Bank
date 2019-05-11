@@ -1,6 +1,7 @@
 package Pages;
 
-import Controllers.PanelController;
+import AccountModel.Account;
+import Controllers.MainController;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -25,13 +26,13 @@ import java.text.DecimalFormat;
  *     <li>personal credit</li>
  * </ul>
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.0
  */
 public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
 
-    private PanelController panelController;
-    private double balance = 1000;
-    private int credit = 100;
+    private MainController mainController;
+    private double balance;
+    private String credit;
     private JLabel balanceLabel;
     private JLabel creditLabel;
     private JLabel deposit;
@@ -41,7 +42,7 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
     private JLabel ME;
     private DecimalFormat format;
 
-    MainPanel(PanelController panelController) {
+    MainPanel(MainController mainController) {
 
         format = new DecimalFormat("#.00");
 
@@ -56,6 +57,8 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
             balanceHeader.setBackground(Color.WHITE);
         }
 
+        balance = mainController.getAccountDao().getAccount().getBalance();
+
         balanceLabel = new JLabel("RMB " + format.format(balance));
         {
             balanceLabel.setBounds(30, 100, 300, 35);
@@ -64,17 +67,31 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
             balanceLabel.setBackground(Color.WHITE);
         }
 
-        JLabel creditHeader = new JLabel("your credit:");
+        JLabel creditHeader = new JLabel("Type:");
         {
-            creditHeader.setBounds(90, 150, 300, 15);
+            creditHeader.setBounds(60, 150, 300, 15);
             creditHeader.setFont(FontDao.getFont(FontDao.MENLO, 15));
             creditHeader.setForeground(Color.BLUE);
             creditHeader.setBackground(Color.WHITE);
         }
 
-        creditLabel = new JLabel("" + credit);
+        int c = mainController.getAccountDao().getAccount().getType();
+
+        switch (c) {
+            case Account.SAVER:
+                credit = "saver account";
+                break;
+            case Account.JUNIOR:
+                credit = "junior account";
+                break;
+            case Account.CURRENT:
+                credit = "current account";
+                break;
+        }
+
+        creditLabel = new JLabel(credit);
         {
-            creditLabel.setBounds(200, 150, 300, 15);
+            creditLabel.setBounds(120, 150, 300, 15);
             creditLabel.setFont(FontDao.getFont(FontDao.MENLO, 15));
             creditLabel.setForeground(Color.BLUE);
             creditLabel.setBackground(Color.WHITE);
@@ -145,7 +162,7 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
         this.add(THIS);
         this.add(ME);
 
-        this.panelController = panelController;
+        this.mainController = mainController;
     }
 
     @Override
@@ -165,7 +182,7 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
         } else if (e.getSource().equals(clear)) {
             System.out.println("clear clicked");
         } else if (e.getSource().equals(ME)) {
-            panelController.push(new UserPanel(panelController));
+            mainController.getPanelController().push(new UserPanel(mainController));
             System.out.println("ME clicked");
         }
     }
