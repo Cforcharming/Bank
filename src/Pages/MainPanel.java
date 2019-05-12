@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
  *     <li>personal credit</li>
  * </ul>
  * @author zhanghanwen
- * @version 1.1
+ * @version 1.2
  */
 public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -203,7 +203,12 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
             }
         } else if (e.getSource().equals(clear)) {
             if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
-                //TODO
+                if (mainController.getAccountDao().clearCheque()) {
+                    JOptionPane.showMessageDialog(this, "All cheques are cleared.", "Success", JOptionPane.PLAIN_MESSAGE);
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "No cheques to clear!", "Warning", JOptionPane.PLAIN_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Your account is currently suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
             }

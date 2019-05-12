@@ -11,14 +11,16 @@ import java.util.ArrayList;
  * each time the memory is changed.
  * @see Account
  * @author zhanghanwen
- * @version 1.1
+ * @version 1.2
  */
 public class AccountDao {
 
-    private Account account;
+    /**
+     * the only instance of the {@code Account} class in the program
+     */
+    volatile private Account account;
 
-    public AccountDao() {
-    }
+    public AccountDao() {}
 
     /**
      * The method for log in. The parameters are after the regex at the pages
@@ -134,7 +136,6 @@ public class AccountDao {
                 day
         );
         writeFile();
-        System.out.println("@Models.AccountDao::register: " + account.toString());
         return 0;
     }
 
@@ -156,18 +157,6 @@ public class AccountDao {
             account.setBalance(account.getBalance() + Double.parseDouble(money));
         }
         updateFile(account);
-        System.out.println("@Models.AccountDao::depositCash: " + account.toString());
-        return 0;
-    }
-
-    /**
-     * deposit by cheque
-     * @param money how much
-     * @param pin PIN
-     * @return 0 OK<br />1 wrong format<br />4 PIN error
-     */
-    public int depositCheque(String money, String pin) {
-        //TODO
         return 0;
     }
 
@@ -199,6 +188,10 @@ public class AccountDao {
         }
 
         temp.setBalance(temp.getBalance() + Double.parseDouble(money));
+
+        if (temp.getAccountNo().equals(account.getAccountNo())) {
+            account = temp;
+        }
         updateFile(temp);
         return 0;
     }
@@ -209,11 +202,82 @@ public class AccountDao {
      * @param money how much
      * @param pin PIN
      * @return 0 OK<br />1 wrong format<br />2 no account<br />3 not enough
-     *          <br />4 PIN error
+     *          <br />4 PIN error<br />5 account suspended
      */
     public int transferCheque(String accountNo, String money, String pin) {
-        //TODO
+
+        int stat = withdraw(money, pin);
+        if (stat != 0) {
+            return stat;
+        }
+
+        if (accountNo.equals("")) {
+            return 1;
+        }
+
+        Account temp = getAccountFromNumber(accountNo);
+        if (temp == null) {
+            return 2;
+        }
+        if (temp.getStatus() == Account.SUSPEND) {
+            return 5;
+        }
+
+        String chequeNo = generateChequeNo();
+        try (
+                FileWriter accountWriter = new FileWriter("resources/data/cheque.csv", true)
+        ) {
+            String preparedString = "\n" + chequeNo + "," + money + "," + accountNo + ",";
+            accountWriter.write(preparedString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return 0;
+    }
+
+    /**
+     * This method clears off cheques
+     * @return true cleared<br />
+     *          false nothing to clear
+     */
+    public boolean clearCheque() {
+        try (
+                FileReader accountReader = new FileReader("resources/data/cheque.csv");
+                LineNumberReader accountLine = new LineNumberReader(accountReader)
+        ) {
+            Account temp = null;
+            String accountString;
+            accountLine.readLine();
+            while (true) {
+                accountString = accountLine.readLine();
+                if (accountString == null) {
+                    break;
+                }
+                String[] splits = accountString.split(",");
+                temp = getAccountFromNumber(splits[2]);
+                temp.setBalance(temp.getBalance() + Double.parseDouble(splits[1]));
+                updateFile(temp);
+
+                if (temp.getAccountNo().equals(account.getAccountNo())) {
+                    account = temp;
+                }
+            }
+            if (temp == null) {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (
+                FileWriter accountWriter = new FileWriter("resources/data/cheque.csv");
+                BufferedWriter accountBufferedWriter = new BufferedWriter(accountWriter)
+                ) {
+            accountBufferedWriter.write("accountNo,money,account,");
+        } catch (IOException ignored) {}
+
+        return true;
     }
 
     /**
@@ -247,7 +311,6 @@ public class AccountDao {
             }
             account.setBalance(after);
         }
-        System.out.println("@Models.AccountDao::withdraw: " + account.toString());
         updateFile(account);
 
         return 0;
@@ -303,7 +366,7 @@ public class AccountDao {
     /**
      * generate account number in the format of
      * account type "a" count
-     * e.g.
+     * <br />e.g.<br />
      * 1a001, type of account: 1 number of people: 1
      * @param type the type of account
      * @return the accountNo
@@ -343,6 +406,40 @@ public class AccountDao {
     }
 
     /**
+     * generate cheque number in the format of
+     * number
+     * e.g. 0001
+     * @return the chequeNo
+     */
+    private String generateChequeNo() {
+        int count = 1;
+        try (
+                FileReader accountReader = new FileReader("resources/data/cheque.csv");
+                LineNumberReader accountLine = new LineNumberReader(accountReader)
+        ) {
+
+            String accountString;
+            accountLine.readLine();
+            while (true) {
+                accountString = accountLine.readLine();
+                if (accountString == null) {
+                    break;
+                }
+                count++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (count < 10) {
+            return "000" + count;
+        } else if (count < 100) {
+            return "000" + count;
+        } else {
+            return "" + count;
+        }
+    }
+
+    /**
      * append the user to the file after the registration
      */
     private void writeFile() {
@@ -360,7 +457,7 @@ public class AccountDao {
     /**
      * get the account instance from the account number
      * @param accountNo the account No. of the account
-     * @return the account instance
+     * @return the account instance, null if not found
      */
     private Account getAccountFromNumber(String accountNo) {
 

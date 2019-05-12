@@ -15,7 +15,7 @@ import java.util.Objects;
  * @see MainPanel
  * @see Models.AccountDao
  * @author zhanghanwen
- * @version 1.1
+ * @version 1.2
  */
 class TransferPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -133,6 +133,10 @@ class TransferPanel extends AutoRefreshableJPanel implements MouseListener {
                 case 4:
                     JOptionPane.showMessageDialog(this, "You have input wrong PIN", "Warning", JOptionPane.PLAIN_MESSAGE);
                     pinText.setText("");
+                    break;
+                case 5:
+                    JOptionPane.showMessageDialog(this, "The account to be transferred is suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+                    accountText.setText("");
                     break;
             }
         } else if (e.getSource().equals(backButton)) {

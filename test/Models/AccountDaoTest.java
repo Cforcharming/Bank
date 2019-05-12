@@ -42,6 +42,18 @@ class AccountDaoTest {
     @Test
     void transferCash() {
         accountDao.login("3a001", "0010");
-        accountDao.transferCash("2a001", "6000", "0010");
+        accountDao.transferCash("3a001", "2000", "0010");
     }
+
+    @Test
+    void transferCheque() {
+        accountDao.login("3a001", "0010");
+        accountDao.transferCheque("3a001", "2000", "0010");
+    }
+
+    @Test
+    void clearCheque() {
+        accountDao.clearCheque();
+    }
+
 }
