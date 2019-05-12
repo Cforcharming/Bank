@@ -1,4 +1,4 @@
-package AccountModel;
+package Models;
 
 /**
  * store the information of a user in the memory
@@ -6,8 +6,9 @@ package AccountModel;
  * account.
  * @see AccountDao
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Account {
 
     /**
@@ -45,16 +46,16 @@ public class Account {
      */
     public static final int CLOSE = 6;
 
-    private String name;
-    private String accountNo;
-    private String pin;
-    private double balance;
-    private int status;
-    private int type;
-    private String address;
-    private int birthYear;
-    private int birthMonth;
-    private int birthDate;
+    volatile private String name;
+    volatile private String accountNo;
+    volatile private String pin;
+    volatile private double balance;
+    volatile private int status;
+    volatile private int type;
+    volatile private String address;
+    volatile private int birthYear;
+    volatile private int birthMonth;
+    volatile private int birthDate;
 
     /**
      * This is constructor is used for new user's registry

@@ -4,11 +4,11 @@ import Controllers.MainController;
 import Pages.LoginPanel;
 
 /**
- * The access of the main {@code Thread}.
- * Initialise the daemon {@code Thread} for back-stage management.
+ * The access of the main method.
+ * Initialise the controllers for back-stage management.
  * @see MainController
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
 public class Bank {
 

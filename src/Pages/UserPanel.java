@@ -1,6 +1,7 @@
 package Pages;
 
 import Controllers.MainController;
+import Models.Account;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -19,12 +20,13 @@ import java.awt.event.MouseListener;
  *     <li>logout</li>
  * </ul>
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
 public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
 
     private MainController mainController;
-    private String name = "C for charming";
+    volatile private String name = "C for charming";
+    private JLabel balanceHeader;
     private JLabel suspend;
     private JLabel resume;
     private JLabel close;
@@ -37,7 +39,7 @@ public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
         this.setLayout(null);
         this.setBackground(Color.WHITE);
 
-        JLabel balanceHeader = new JLabel(name);
+        balanceHeader = new JLabel(name);
         {
             balanceHeader.setBounds(10, 40, 300, 25);
             balanceHeader.setFont(FontDao.getFont(FontDao.IMPACT, 25));
@@ -115,29 +117,70 @@ public class UserPanel extends AutoRefreshableJPanel implements MouseListener {
         this.add(FUNCTIONS);
 
         this.mainController = mainController;
+        this.refresh();
     }
 
     @Override
     protected void refresh() {
+        Thread t = new Thread(() -> {
+            while (true) {
+                name = mainController.getAccountDao().getAccount().getName();
+                balanceHeader.setText(name);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {}
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("@UserPane");
-        System.out.println("name: " + name);
+
         if (e.getSource().equals(FUNCTIONS)) {
-            System.out.println("FUNCTIONS clicked");
             mainController.getPanelController().pop();
+
         } else if (e.getSource().equals(logout) || e.getSource().equals(logoutText)) {
-            System.out.println("logout clicked");
             mainController.getPanelController().pop();
             mainController.getPanelController().pop();
+
         } else if (e.getSource().equals(suspend)) {
-            System.out.println("suspend clicked");
+
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.SUSPEND) {
+                JOptionPane.showMessageDialog(this, "Your account is already suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+
+            } else {
+                mainController.getAccountDao().getAccount().setStatus(Account.SUSPEND);
+                mainController.getAccountDao().updateFile(mainController.getAccountDao().getAccount());
+                JOptionPane.showMessageDialog(this, "Your account is now suspended.", "Success", JOptionPane.PLAIN_MESSAGE);
+
+            }
         } else if (e.getSource().equals(resume)) {
-            System.out.println("resume clicked");
+
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
+                JOptionPane.showMessageDialog(this, "Your account is currently normal!", "Warning", JOptionPane.PLAIN_MESSAGE);
+
+            } else {
+                mainController.getAccountDao().getAccount().setStatus(Account.NORMAL);
+                mainController.getAccountDao().updateFile(mainController.getAccountDao().getAccount());
+                JOptionPane.showMessageDialog(this, "Your account is now resumed.", "Success", JOptionPane.PLAIN_MESSAGE);
+
+            }
         } else if (e.getSource().equals(close)) {
-            System.out.println("close clicked");
+
+            if (mainController.getAccountDao().getAccount().getBalance() != 0) {
+                JOptionPane.showMessageDialog(this, "You need to clear your balance before closing the accont.", "Success", JOptionPane.PLAIN_MESSAGE);
+            } else {
+                Object[] options ={ "yes", "no" };
+                int m = JOptionPane.showOptionDialog(this, "Closing an account cannot be undone.\nAre you sure to close your account?", "Waring",JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                if (m == 0) {
+                    mainController.getAccountDao().getAccount().setStatus(Account.CLOSE);
+                    mainController.getAccountDao().updateFile(mainController.getAccountDao().getAccount());
+                    mainController.getPanelController().pop();
+                    mainController.getPanelController().pop();
+                }
+            }
         }
     }
 

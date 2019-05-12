@@ -14,7 +14,7 @@ import java.util.Objects;
  * the registry page
  * @see AutoRefreshableJPanel
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
 public class RegisterPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -105,14 +105,8 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("@RegisterPanel");
-        System.out.println(
-                "name: " + nameText.getText()
-                        + " address: " + addressText.getText()
-                        + " birth: " + dateText.getText()
-                        + " type: " + Objects.requireNonNull(typeBox.getSelectedItem()).toString());
         if (e.getSource().equals(logInButton)) {
-            System.out.println("Log in button clicked");
+
             int msg = mainController.getAccountDao().register(
                     nameText.getText(),
                     addressText.getText(),
@@ -132,21 +126,20 @@ public class RegisterPanel extends AutoRefreshableJPanel implements MouseListene
             } else {
                 switch (msg) {
                     case 1:
-                        JOptionPane.showMessageDialog(this, "You are on the blacklist, and you cannot register!", "", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "You are on the blacklist, and you cannot register!", "Warning", JOptionPane.PLAIN_MESSAGE);
                         break;
                     case 2:
-                        JOptionPane.showMessageDialog(this, "You too young to register a current account.", "", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "You too young to register a current account.", "Warning", JOptionPane.PLAIN_MESSAGE);
                         break;
                     case 3:
-                        JOptionPane.showMessageDialog(this, "Your birthday format is incorrect!", "", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Your birthday format is incorrect!", "Warning", JOptionPane.PLAIN_MESSAGE);
                         break;
                     case 4:
-                        JOptionPane.showMessageDialog(this, "Please complete the table!", "", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Please complete the table!", "Warning", JOptionPane.PLAIN_MESSAGE);
                         break;
                 }
             }
         } else if (e.getSource().equals(backButton)) {
-            System.out.println("Back button clicked");
             mainController.getPanelController().pop();
         }
     }

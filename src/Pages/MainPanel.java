@@ -1,7 +1,7 @@
 package Pages;
 
-import AccountModel.Account;
 import Controllers.MainController;
+import Models.Account;
 import Util.FontDao;
 import Util.IconDao;
 
@@ -26,15 +26,14 @@ import java.text.DecimalFormat;
  *     <li>personal credit</li>
  * </ul>
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
 public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
 
     private MainController mainController;
-    private double balance;
+    volatile private double balance;
     private String credit;
     private JLabel balanceLabel;
-    private JLabel creditLabel;
     private JLabel deposit;
     private JLabel withdraw;
     private JLabel transfer;
@@ -89,7 +88,7 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
                 break;
         }
 
-        creditLabel = new JLabel(credit);
+        JLabel creditLabel = new JLabel(credit);
         {
             creditLabel.setBounds(120, 150, 300, 15);
             creditLabel.setFont(FontDao.getFont(FontDao.MENLO, 15));
@@ -163,27 +162,53 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
         this.add(ME);
 
         this.mainController = mainController;
+        this.refresh();
     }
 
     @Override
     protected void refresh() {
+        Thread t = new Thread(() -> {
+            while (true) {
+                balance = mainController.getAccountDao().getAccount().getBalance();
+                balanceLabel.setText("RMB " + format.format(balance));
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {}
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("@MainPanel: ");
-        System.out.println("balance: " + balance + " credit: " + credit);
+
         if (e.getSource().equals(deposit)) {
-            System.out.println("deposit clicked");
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
+                mainController.getPanelController().push(new DepositPanel(mainController));
+            } else {
+                JOptionPane.showMessageDialog(this, "Your account is currently suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+            }
         } else if (e.getSource().equals(withdraw)) {
-            System.out.println("withdraw clicked");
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
+                mainController.getPanelController().push(new WithdrawPanel(mainController));
+            } else {
+                JOptionPane.showMessageDialog(this, "Your account is currently suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+            }
         } else if (e.getSource().equals(transfer)) {
-            System.out.println("transfer clicked");
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
+                mainController.getPanelController().push(new TransferPanel(mainController));
+            } else {
+                JOptionPane.showMessageDialog(this, "Your account is currently suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+            }
         } else if (e.getSource().equals(clear)) {
-            System.out.println("clear clicked");
+            if (mainController.getAccountDao().getAccount().getStatus() == Account.NORMAL) {
+                //TODO
+            } else {
+                JOptionPane.showMessageDialog(this, "Your account is currently suspended.", "Warning", JOptionPane.PLAIN_MESSAGE);
+            }
         } else if (e.getSource().equals(ME)) {
             mainController.getPanelController().push(new UserPanel(mainController));
-            System.out.println("ME clicked");
         }
     }
 

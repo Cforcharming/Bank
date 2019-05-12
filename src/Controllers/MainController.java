@@ -1,6 +1,6 @@
 package Controllers;
 
-import AccountModel.AccountDao;
+import Models.AccountDao;
 
 /**
  * The main controller that controls almost everything

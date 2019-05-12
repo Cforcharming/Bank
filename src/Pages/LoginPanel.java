@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
 /**
  * Log in page, the first page showed.
  * @author zhanghanwen
- * @version 1.0
+ * @version 1.1
  */
 public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -94,18 +94,15 @@ public class LoginPanel extends AutoRefreshableJPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
 
         String password =  new String(passwordText.getPassword());
-        System.out.println("@LoginPanel\nName: " + nameText.getText() + ", PIN: " + password);
-
         if (e.getSource().equals(logInButton)) {
-            System.out.println("Log in button clicked");
+
             if (mainController.getAccountDao().login(nameText.getText(), password)) {
                 mainController.getPanelController().push(new MainPanel(mainController));
             } else {
-                JOptionPane.showMessageDialog(this, "You have input wrong account number or PIN", "", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, "You have input wrong account number or PIN", "Warning", JOptionPane.PLAIN_MESSAGE);
                 passwordText.setText("");
             }
         } else if (e.getSource().equals(addUserButton)) {
-            System.out.println("Add user button clicked");
             mainController.getPanelController().push(new RegisterPanel(mainController));
         }
     }

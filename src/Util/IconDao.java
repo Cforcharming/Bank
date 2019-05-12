@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * get a certain icon
  * @author zhanghanwen
- * @version 0.1
+ * @version 1.1
  */
 public class IconDao {
 
@@ -19,6 +19,7 @@ public class IconDao {
     public static final String DEPOSIT = "resources/icons/yucunkuan.png";
     public static final String WITHDRAW = "resources/icons/qukuanji.png";
     public static final String TRANSFER = "resources/icons/zhuanzhang.png";
+    public static final String TRANSFER2 = "resources/icons/zhuanzhang2.png";
     public static final String CLEAR = "resources/icons/tixian.png";
     public static final String CREDITCARD_FILL = "resources/icons/creditcard-fill.png";
     public static final String CREDITCARD = "resources/icons/creditcard.png";
