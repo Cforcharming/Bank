@@ -14,7 +14,7 @@ import java.awt.event.MouseListener;
  * @see MainPanel
  * @see Models.AccountDao
  * @author zhanghanwen
- * @version 1.1
+ * @version 1.3
  */
 public class WithdrawPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -103,6 +103,10 @@ public class WithdrawPanel extends AutoRefreshableJPanel implements MouseListene
                 case 4:
                     JOptionPane.showMessageDialog(this, "You have input wrong PIN!", "Warning", JOptionPane.PLAIN_MESSAGE);
                     pinText.setText("");
+                    break;
+                case 5:
+                    JOptionPane.showMessageDialog(this, "You can withdraw 7 days later!", "Success", JOptionPane.PLAIN_MESSAGE);
+                    mainController.getPanelController().pop();
                     break;
             }
         } else if (e.getSource().equals(backButton)) {

@@ -9,7 +9,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.*;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * The main page, which has the functions of
@@ -26,7 +30,7 @@ import java.text.DecimalFormat;
  *     <li>personal credit</li>
  * </ul>
  * @author zhanghanwen
- * @version 1.2
+ * @version 1.3
  */
 public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -167,7 +171,7 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
 
     @Override
     protected void refresh() {
-        Thread t = new Thread(() -> {
+        Thread t1 = new Thread(() -> {
             while (true) {
                 balance = mainController.getAccountDao().getAccount().getBalance();
                 balanceLabel.setText("RMB " + format.format(balance));
@@ -176,8 +180,82 @@ public class MainPanel extends AutoRefreshableJPanel implements MouseListener {
                 } catch (InterruptedException ignored) {}
             }
         });
-        t.setDaemon(true);
-        t.start();
+        t1.setDaemon(true);
+        t1.start();
+
+        Thread t2 = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000 * 3600);
+                    mainController.getAccountDao().clearCheque();
+                } catch (InterruptedException ignored) {}
+            }
+        });
+        t2.setDaemon(true);
+        t2.start();
+
+        Thread t3 = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                    Account account = mainController.getAccountDao().getAccount();
+                    if (account.getType() == Account.SAVER) {
+                        ArrayList<String> lines = new ArrayList<>();
+                        try (
+                                FileReader accountReader = new FileReader("resources/data/time.csv");
+                                LineNumberReader accountLineReader = new LineNumberReader(accountReader)
+                        ) {
+                            String accountString = accountLineReader.readLine();
+                            lines.add(accountString);
+                            while (true) {
+                                accountString = accountLineReader.readLine();
+                                String[] splits;
+                                if (accountString != null) {
+                                    splits = accountString.split(",");
+
+                                    if (account.getAccountNo().equals(splits[0])) {
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                        Calendar c = Calendar.getInstance();
+                                        if (sdf.format(c.getTime()).equals(splits[1])) {
+                                            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+                                            synchronized (account) {
+                                                double current = account.getBalance();
+                                                double after = current - Double.parseDouble(splits[2]);
+                                                account.setBalance(after);
+                                            }
+                                            mainController.getAccountDao().updateFile(account);
+                                            lines.add("");
+                                        } else {
+                                            lines.add(accountString);
+                                        }
+                                    } else {
+                                        lines.add(accountString);
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try (
+                                FileWriter accountWriter = new FileWriter("resources/data/time.csv");
+                                BufferedWriter accountBufferedWriter = new BufferedWriter(accountWriter)
+                        ) {
+                            for (int i = 0; i < lines.size() - 1; i++) {
+                                accountBufferedWriter.write(lines.get(i));
+                                accountBufferedWriter.newLine();
+                            }
+                            accountBufferedWriter.write(lines.get(lines.size() - 1));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (InterruptedException ignored) {}
+            }
+        });
+        t3.setDaemon(true);
+        t3.start();
     }
 
     @Override

@@ -1,37 +1,74 @@
 # Bank
 **Software Engineering Laboratory**  
-
-Over the EBU5304 module in the next few weeks, 
-you will be required to develop a simple banking system using Agile methods, 
-from requirements, through to analysis/design, implementation and testing, 
-following the guidelines and activities outlined in the lectures. 
-Each week you will be required to carry out one phase in the development lifecycle. 
-Bear in mind that there is no absolute right answer – your solution may be perfectly appropriate.  
-
-It should be noted that determining the requirements of a system is one
- of the most important and complex phases in any development project – 
-if this is wrong, it doesn’t matter how good the system will be designed, -- 
-it will be the wrong system! However, in order to simplify the case study, 
-you will start from the point at which the requirements have been stated in a detailed level. 
-As in real systems though, there may be more details you want to know that are missing from these notes 
-– in this situation you can make your own assumptions or ask the Lecturers/Demonstrators for clarification.  
-## Guideline
-A simple banking system is to be developed with the intention of providing a generic, 
-reusable system from which to develop more realistic systems. 
-he requirements of the system are to offer a number of different accounts, 
-each of which provides specific services to the customer. 
-A simple banking system is to be developed with the intention of providing a generic, 
-reusable system from which to develop more realistic systems. 
-The requirements of the system are to offer a number of different accounts, 
-each of which provides specific services to the customer. 
-The following are all types of accounts that must be supported by the system:
-## Functions
-### Accounts
->The following are all types of accounts that must be supported by the system:
->* **saver account**
->* **junior account**
->* **current account**  
->
+**This is the release note of the Bank Project**  
+## Technique Design
+### Environment
+This code is built under **JetBrains Intellij Idea Ultimate 2019.1.2**  
+With Java Development Kit **OpenJDK 11.0.1**  
+Use **JRE 11** or above
+### Version Control
+Git is imported as version control.  
+GitHub: https://github.com/cforcharming/bank  
+**This repository is currently private, but will be made public later.**  
+### Test Module
+The JUnit5 is used as test tool.  
+### MVC Module
+Model - entity classes:  
+* package Models  
+* Package Util  
+Visual - boundary classes:
+* package Pages  
+Controller - controller classes:  
+* package Main  
+* package Controllers  
+### Module Structure
+ __________Bank  
+ |  
+ |_________src  
+ | |_______Main  
+ | |   |___Bank.java  
+ | |  
+ | |_______Models  
+ | |   |___Account.java  
+ | |   |___AccountDao.java  
+ | |  
+ | |_______Util  
+ | |   |___FontDao.java  
+ | |   |___IconDao.java  
+ | |  
+ | |_______Controllers  
+ | |   |___MainController.java  
+ | |   |___PanelController.java  
+ | |  
+ | |_______Pages  
+ |     |___AutoRefreshableJPanel.java  
+ |     |___DepositPanel.java  
+ |     |___LoginPanel.java  
+ |     |___MainFrame.java  
+ |     |___MainPanel.java  
+ |     |___RegisterPanel.java  
+ |     |___TransferPanel.java  
+ |     |___UserPanel.java  
+ |     |___WithdrawPanel.java  
+ |  
+ |_________out  
+ |  
+ |_________test  
+ |  
+ |_________resources  
+ |    
+ |_________Bank.iml  
+ |_________.idea  
+ |_________.git  
+#### Descriptions
+* **src** source code  
+* **out** compiled release  
+* **test** JUnit test ase  
+* **resources** database  
+## Usage
+### log in
+You need to input the account No. and the PIN number to log in.  
+Or to register one, and the account No. and the PIN will be provided to you.
 >When a customer joins the bank, they are required choose an account type to open, 
 and must credit it with a minimum figure. A customer may open more than one type of account.  
 In order to open an account, the customer must provide the following information:  
@@ -40,13 +77,7 @@ In order to open an account, the customer must provide the following information
 >* **date of birth**
 >* **type of account to be opened**  
 >
->Only customers under the age of 16 may open a Junior account. 
-To determine the credit status of a customer, 
-the bank sends the customer's details to a Credit Agency, 
-who then carries out a credit search. 
-Provided that the customer has a satisfactory credit history, a new account is opened. 
-Each account has a unique account number. 
-A customer is also issued a separate personal identification number (PIN) for that account.  
+>Only customers under the age of 16 may open a Junior account.  
 ### Deposit Funds
 >Funds may be deposited in an account provided that the depositor provides the appropriate account number. 
 When funds are deposited, they are either cleared (the funds have been fully credited, 
@@ -64,11 +95,13 @@ In the case of Junior and Saver accounts, no withdrawal should result in a negat
 In the case of a Current account, a customer may withdraw additional funds, up to, 
 but not exceeding, their overdraft limit. For a withdrawal from a Saver account, 
 a minimum period of notice (in days) must be given before any withdrawal can be made.  
-### Suspend Account
+### Account Management
+#### Suspend Account
 >In some situations, 
 accounts may be suspended and no further transactions may occur until the account is re-instated.  
-### Close Account
+#### Close Account
 >A customer can choose to close their account provided that the balance has been cleared.  
 
 <br /><br />
-Copyright: Queen Mary University of London
+Copyright: QMUL & BUPT  
+Author: Zhang, Hanwen

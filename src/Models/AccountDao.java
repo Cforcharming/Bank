@@ -1,7 +1,9 @@
 package Models;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * provide access for user information from the files
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  * each time the memory is changed.
  * @see Account
  * @author zhanghanwen
- * @version 1.2
+ * @version 1.3
  */
 public class AccountDao {
 
@@ -285,7 +287,7 @@ public class AccountDao {
      * @param money how much
      * @param pin PIN
      * @return 0 OK<br />1 wrong format<br />3 not enough
-     *          <br />4 PIN error
+     *          <br />4 PIN error<br />5 notice
      */
     public int withdraw(String money, String pin) {
 
@@ -295,23 +297,40 @@ public class AccountDao {
             return 4;
         }
 
-        //noinspection SynchronizeOnNonFinalField
-        synchronized (account) {
-            double current = account.getBalance();
-            double after = current - Double.parseDouble(money);
+        if (account.getType() == Account.SAVER && Double.parseDouble(money) > 0) {
+            try (
+                    FileWriter accountWriter = new FileWriter("resources/data/time.csv", true)
+            ) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE, 7);
+                String preparedString = "\n" + account.getAccountNo() + "," + sdf.format(c.getTime()) + "," + Double.parseDouble(money) +",";
+                accountWriter.write(preparedString);
 
-            if (account.getType() == Account.CURRENT) {
-                if (after < -2000) {
-                    return 3;
-                }
-            } else {
-                if (after < 0) {
-                    return 3;
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            account.setBalance(after);
+            return 5;
+        } else {
+
+            //noinspection SynchronizeOnNonFinalField
+            synchronized (account) {
+                double current = account.getBalance();
+                double after = current - Double.parseDouble(money);
+
+                if (account.getType() == Account.CURRENT) {
+                    if (after < -2000) {
+                        return 3;
+                    }
+                } else {
+                    if (after < 0) {
+                        return 3;
+                    }
+                }
+                account.setBalance(after);
+            }
+            updateFile(account);
         }
-        updateFile(account);
 
         return 0;
     }

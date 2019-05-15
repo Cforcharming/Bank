@@ -14,7 +14,7 @@ import java.awt.event.MouseListener;
  * @see MainPanel
  * @see Models.AccountDao
  * @author zhanghanwen
- * @version 1.2
+ * @version 1.3
  */
 public class DepositPanel extends AutoRefreshableJPanel implements MouseListener {
 
@@ -88,7 +88,7 @@ public class DepositPanel extends AutoRefreshableJPanel implements MouseListener
             result = mainController.getAccountDao().depositCash(moneyText.getText(), password);
             switch (result) {
                 case 0:
-                    JOptionPane.showMessageDialog(this, "You have successfully deposited!", "Success", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "You have successfully deposited: " + moneyText.getText(), "Success", JOptionPane.PLAIN_MESSAGE);
                     break;
                 case 1:
                     JOptionPane.showMessageDialog(this, "You have input wrong format of credits!", "Warning", JOptionPane.PLAIN_MESSAGE);
